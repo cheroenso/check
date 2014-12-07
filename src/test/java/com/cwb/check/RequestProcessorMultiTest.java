@@ -13,7 +13,7 @@ import com.cwb.request.IsRequestProcessor;
 
 
 /**
- * Junit4 harness to Image Server and validate the response. Uses a data file for multiple tests.
+ * Junit4 harness to make requests and validate the response. Uses a data file for multiple tests.
  * @author cbrann
  * @since 2012-05-29
  * 
