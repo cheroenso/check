@@ -73,7 +73,7 @@ public class Histogram {
 //		Bin[] binArr = new  Bin[bins.intValue() +1];
 		Bin[] binArr = new  Bin[bins.intValue()];
 		// Initialize Bins
-		for ( int i = 0; i <= bins.intValue(); i++){
+		for ( int i = 0; i < bins.intValue(); i++){
 			binArr[i] = new Bin(Integer.valueOf(i));
 			binArr[i].setLower(i * size);
 			binArr[i].setUpper((i*size) + size);
