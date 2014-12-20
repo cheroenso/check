@@ -28,7 +28,7 @@ public class RequestProcessorMultiTest {
 	// Default host, override by setting system property "TEST_HOST"
 	public static String host = "s7porto.macromedia.com";
 	// Default host, override by setting system property "TEST_REQUEST_FILE"
-	public static String testFile = "/opt/jenkins/home/data/requests_demo.txt";
+	public static String testFile = "resources/requests_demo.txt";
 	private static String request;
 	private IsRequestProcessor testProcessor;
 	

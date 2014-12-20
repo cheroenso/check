@@ -2,7 +2,6 @@ package com.cwb.review;
 
 import java.io.*;
 
-import org.w3c.*;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.*;

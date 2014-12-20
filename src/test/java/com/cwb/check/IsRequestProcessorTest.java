@@ -7,8 +7,8 @@ import org.junit.Test;
 import com.cwb.request.IsRequestProcessor;
 
 public class IsRequestProcessorTest extends IsRequestProcessor {
-	String host = "s7porto.macromedia.com";
-	String dir = "/opt/jenkins/home/data/";
+	String host = "localhost";
+	String dir = "resources/";
 	
 
 	@Test
