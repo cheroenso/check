@@ -4,112 +4,103 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import sun.misc.Sort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+//import ch.qos.logback.classic.Logger;
+//import java.util.logging.Logger;
+//import java.util.logging.*;
+
 
 import com.cwb.check.util.InputHandler;
 
 public class Histogram {
+	
+	private static Logger log = LoggerFactory.getLogger(Histogram.class);
 	// put all numbers in  original array
 	// get minimum and maximum
 	// get total size by subtract minimum from maximum
 	// get bin size by dividing total count by number of bins
 	// define separate array for each bin
 	// process original array
-	//    for each member in array decide which bin it belongs to
-	//    increment the count for a specific bin if it matches
+	// for each member in array decide which bin it belongs to
+	// increment the count for a specific bin if it matches
 	// display bin boundaries followed by count of members
 	
-	public static Double displayAll(String fileName){
+	public static String displayAll(String numBins, String fileName){
+
+		StringBuffer report = new StringBuffer();
 		InputHandler input = new InputHandler();
 		// put all numbers in  original array
 		ArrayList<String> valueSet = input.getAllRequestsFromFile(fileName);
 		if (valueSet.isEmpty()){
-			System.err.println("Unable to get valid numbers from " + fileName);
+			log.error("Unable to get valid numbers from " + fileName);
 		}
-		// Convert String to Double
+		// Convert original String set to Double set
 		ArrayList<Double> doubleSet = new ArrayList();
 		Iterator<String> itr = valueSet.iterator();
 		Double count = 0.0;
-		Double total = 0.0;
 		Double bins = 3.0;
+		try {
+			bins = new Integer(numBins).doubleValue();
+		} catch (Exception e){
+			log.error(e.getMessage());
+		}
 		while (itr.hasNext()){
 			try {
 				doubleSet.add(Double.parseDouble(itr.next()));
-//				count++;
 			} catch (Exception e) {
 				String location = Double.toString(count +1).substring(0, Double.toString(count).indexOf('.'));
-				System.err.println("Error parsing " + fileName + " at " + location);
-				System.err.println(e.getMessage());
+				log.error("Error parsing " + fileName + " at " + location + " ", e);
 			}
 		}
 		Iterator<Double> dblIter = doubleSet.iterator();
-////		bins = doubleSet.size()/;
-		while (dblIter.hasNext()){
-			System.out.println(dblIter.next());
-		}
-
-//		System.out.println(valueSet.get(0));
-//		System.out.println(valueSet.get(valueSet.size() - 1));
-		
-//		while (itr.hasNext()){
-//			System.out.println(itr.hasNext());
-//		}
-		System.out.println("Sorting doubleSet");
-		Collections.sort(doubleSet);
-		Double max = doubleSet.get(doubleSet.size()-1);
-//		dblIter = doubleSet.iterator();
+		// DEBUG - print out values
 //		while (dblIter.hasNext()){
-//			total += dblIter.next();
 //			System.out.println(dblIter.next());
 //		}
-//		System.out.println("total: " + total);
-//		Double size = total / bins;
+
+		log.trace("sorting doubleSet");
+		Collections.sort(doubleSet);
+		Double max = doubleSet.get(doubleSet.size()-1);
+
+		// Define size of each bin
 		Double size = max / bins;
-		System.out.println("bin size: " + size);
-//		System.out.println("after total run");
+		log.trace("bin size: " + size);
 		
 		dblIter = doubleSet.iterator();
-//		System.out.println("total bins: " + (bins.intValue() + 1));
-//		Bin[] binArr = new  Bin[bins.intValue() +1];
 		Bin[] binArr = new  Bin[bins.intValue()];
 		// Initialize Bins
 		for ( int i = 0; i < bins.intValue(); i++){
 			binArr[i] = new Bin(Integer.valueOf(i));
 			binArr[i].setLower(i * size);
 			binArr[i].setUpper((i*size) + size);
-			System.out.println("lower: " + binArr[i].getLower());
+			log.debug("creating bin " + i + " with range from " + binArr[i].getLower() + " to " + binArr[i].getUpper());
 		}
-//		Double doubleArr[][];
-//		while (dblIter.hasNext()){
-//			
-//			System.out.println(dblIter.next());
-//		}
-		System.out.println("third run");
+
+		log.debug("Allocate to bins");
 		dblIter = doubleSet.iterator();
 		while (dblIter.hasNext()){
 			Double d = dblIter.next();
-			System.out.println("looking for " + d);
+			log.trace("categorizing " + d);
 			// find the right bin
 			boolean found = false;
 			int i = 0;
 			while (!found && i <= binArr.length){
-				Double lower = binArr[i].getLower();
-				Double upper = binArr[i].getUpper();
-				System.out.println("Checking bin " + binArr[i].getName() + ", lower: " + lower + ", upper: " + upper);
 				if (d > binArr[i].getLower() && d <= binArr[i].getUpper()){
 					binArr[i].addToCount(1.0);
 					found = true;
-					System.out.println("bin: " + binArr[i].getName() + ", count: " + binArr[i].getCount());
+					log.debug("adding to bin: " + binArr[i].getName() + ", new count: " + binArr[i].getCount().intValue());
 				}
 				i++;
 			}
 
 		}
-		System.out.println("Histogram:");
+		report.append("Histogram of " + fileName + " into " + bins.toString() + " bins \n");
 		for (int j = 0; j < binArr.length; j++){
-			System.out.println("bin: " + binArr[j].getName() + ", count: " + binArr[j].getCount());
+			report.append("bin " + binArr[j].getName() + " contains: " + binArr[j].getCount().intValue() + "\n");
 		}
-		return bins;
+		return report.toString();
 	}
 	
 	private Bin findBin(Double d){
