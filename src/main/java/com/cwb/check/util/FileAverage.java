@@ -14,8 +14,9 @@ public class FileAverage {
 		try {
 			if (args == null || args.length != 1) {
 				System.out.println(usage.toString());
+			} else {
+				System.out.println(Average.averageFile(args[0].toString()));
 			}
-			System.out.println(Average.averageFile(args[0].toString()));
 		} catch (Exception e) {
 			System.err.println("Error processing " + args[0]);
 			System.err.println(e.getStackTrace());

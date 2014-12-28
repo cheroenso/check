@@ -3,6 +3,9 @@ package com.cwb.check.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.cwb.check.util.InputHandler;
 
 public class Average {
@@ -12,11 +15,14 @@ public class Average {
 	 * a double the program will exit and return an average of all values up to that point.
 	 * 
 	 */
+	
+	private static Logger log = LoggerFactory.getLogger(Average.class);
+	
 	public static Double averageFile(String fileName){
 		InputHandler input = new InputHandler();
 		ArrayList<String> valueSet = input.getAllRequestsFromFile(fileName);
 		if (valueSet.isEmpty()){
-			System.err.println("Unable to get valid numbers from " + fileName);
+			log.error("Unable to get valid numbers from " + fileName);
 		}
 		Iterator<String> itr = valueSet.iterator();
 		Double count = 0.0;
@@ -28,8 +34,7 @@ public class Average {
 				count++;
 			} catch (Exception e) {
 				String location = Double.toString(count +1).substring(0, Double.toString(count).indexOf('.'));
-				System.err.println("Error parsing " + fileName + " at " + location);
-				System.err.println(e.getMessage());
+				log.error("Error parsing " + fileName + " at " + location + " ", e);
 			}
 		}
 		if (count > 0.0 && total > 0.0 ){
