@@ -38,14 +38,10 @@ public class Histogram {
 		}
 		// Convert original String set to Double set
 		ArrayList<Double> doubleSet = new ArrayList();
+
 		Iterator<String> itr = valueSet.iterator();
 		Double count = 0.0;
-		Double bins = 3.0;
-		try {
-			bins = new Integer(numBins).doubleValue();
-		} catch (Exception e){
-			log.error(e.getMessage());
-		}
+
 		while (itr.hasNext()){
 			try {
 				doubleSet.add(Double.parseDouble(itr.next()));
@@ -54,29 +50,22 @@ public class Histogram {
 				log.error("Error parsing " + fileName + " at " + location + " ", e);
 			}
 		}
-		Iterator<Double> dblIter = doubleSet.iterator();
-		// DEBUG - print out values
-//		while (dblIter.hasNext()){
-//			System.out.println(dblIter.next());
-//		}
 
 		log.trace("sorting doubleSet");
 		Collections.sort(doubleSet);
+//		Double max = doubleSet.get(doubleSet.size()-1);
+		
+		Iterator<Double> dblIter = doubleSet.iterator();
+		dblIter = doubleSet.iterator();
+		Bin[] binArr = makeBinArr(numBins);
+		
 		Double max = doubleSet.get(doubleSet.size()-1);
-
+		Double bins = Double.valueOf(String.valueOf(binArr.length));
 		// Define size of each bin
 		Double size = max / bins;
-		log.trace("bin size: " + size);
-		
-		dblIter = doubleSet.iterator();
-		Bin[] binArr = new  Bin[bins.intValue()];
+		log.trace("bin size: " + size);		
 		// Initialize Bins
-		for ( int i = 0; i < bins.intValue(); i++){
-			binArr[i] = new Bin(Integer.valueOf(i));
-			binArr[i].setLower(i * size);
-			binArr[i].setUpper((i*size) + size);
-			log.debug("creating bin " + i + " with range from " + binArr[i].getLower() + " to " + binArr[i].getUpper());
-		}
+		binArr = initializeBinArr(binArr, bins, size);
 
 		log.debug("Allocate to bins");
 		dblIter = doubleSet.iterator();
@@ -86,7 +75,7 @@ public class Histogram {
 			// find the right bin
 			boolean found = false;
 			int i = 0;
-			while (!found && i <= binArr.length){
+			while (!found && i < binArr.length){
 				if (d > binArr[i].getLower() && d <= binArr[i].getUpper()){
 					binArr[i].addToCount(1.0);
 					found = true;
@@ -94,18 +83,34 @@ public class Histogram {
 				}
 				i++;
 			}
-
 		}
 		report.append("Histogram of " + fileName + " into " + bins.toString() + " bins \n");
 		for (int j = 0; j < binArr.length; j++){
-			report.append("bin " + binArr[j].getName() + " contains: " + binArr[j].getCount().intValue() + "\n");
+			String bin = "bin: " + j + " range: " + binArr[j].getLower() + "-" + binArr[j].getUpper();
+			report.append(bin + " count: " + binArr[j].getCount().intValue() + "\n");
 		}
 		return report.toString();
 	}
 	
-	private Bin findBin(Double d){
-		Bin b = new Bin(1);
-		return b;
+	private static Bin[] makeBinArr(String numBins){
+		Double bins = 0.0;
+		try {
+			bins = new Integer(numBins).doubleValue();
+		} catch (Exception e){
+			log.error(e.getMessage());
+		}
+		Bin[] binArr = new  Bin[bins.intValue()];
+		return binArr;
+	}
+	
+	private static Bin[] initializeBinArr(Bin[] binArr, Double bins, Double size){
+		for ( int i = 0; i < bins.intValue(); i++){
+			binArr[i] = new Bin(Integer.valueOf(i));
+			binArr[i].setLower(i * size);
+			binArr[i].setUpper((i*size) + size);
+			log.debug("creating bin " + i + " with range from " + binArr[i].getLower() + " to " + binArr[i].getUpper());
+		}
+		return binArr;
 	}
 	
 	private static class Bin{
@@ -116,9 +121,7 @@ public class Histogram {
 		Double binLower = 0.0;
 		Double binUpper = 0.0;
 		Double binTotal = 0.0;
-		void setName(Integer i){
-			name = i;
-		}
+
 		Integer getName(){
 			return name;
 		}
