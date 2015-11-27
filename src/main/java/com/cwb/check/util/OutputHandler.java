@@ -7,8 +7,10 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 import javax.imageio.ImageIO;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -18,6 +20,7 @@ import javax.imageio.ImageIO;
 public class OutputHandler {
 	public static String outputPath = "/tmp/imgcheck/";
 	public static String fileNameFormat = "yyyyMMddhhmmss.SSSS";
+	private static Logger log = LoggerFactory.getLogger(OutputHandler.class);
 	
 	/**
 	 * Save an image to a file name (based on a timestamp)
@@ -38,7 +41,7 @@ public class OutputHandler {
 			File outputfile = new File(path);
 			ImageIO.write(bufImage, format, outputfile);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 		}
 		return path;
 	}
@@ -64,7 +67,7 @@ public class OutputHandler {
 			outputfile.flush();
 			outputfile.close();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 		}
 		return path;
 	}	
@@ -87,7 +90,7 @@ public class OutputHandler {
 			File file = new File(name);
 			file.delete();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			log.error(e.getMessage());
 		}
 	}
 

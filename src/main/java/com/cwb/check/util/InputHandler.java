@@ -3,6 +3,9 @@ package com.cwb.check.util;
 import java.io.*;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 
  * @author cbrann
@@ -10,6 +13,7 @@ import java.util.ArrayList;
  */
 public class InputHandler {
 
+	private static Logger log = LoggerFactory.getLogger(InputHandler.class);
 	/**
 	 * Get requests from file
 	 * @param fileName
